@@ -1,6 +1,0 @@
-package com.nsrddyn.torque.cpu
-
-
-class ALU() extends Cpu() {
-  
-}
