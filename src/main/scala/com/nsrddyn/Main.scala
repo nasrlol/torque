@@ -3,8 +3,13 @@ package com.nsrddyn
 
 object Torque {
 
-  def main(args: Array[String]): Unit = {
-    println("--- TORQUE STRESS TESTING UTILITY ---")
-  }
+import com.nsrddyn 
+
+  @main  def HelloWorld(args: String*): Unit = 
+    println("--- TORQUE STRESS TESTING UTILITY")
+    val prime = new Prime()
+
+    prime.run(3, 5)
+     
 }
 
