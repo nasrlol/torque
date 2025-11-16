@@ -1,21 +1,13 @@
-# Scala + sbt build artifacts
 target/
 project/target/
 project/project/
-
-# Metals + BSP cache
+.bloop/
 .metals/
 .bsp/
-
-# Java / JVM artifacts
 *.class
 *.log
 hs_err_pid*
-
-# IntelliJ
 .idea/
 *.iml
-
-# VSCode
 .vscode/
 
