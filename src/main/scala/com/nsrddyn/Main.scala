@@ -13,7 +13,7 @@ object Torque {
   val now: Instant = Instant.now()
   println(now)
 
-  val pr = new Prime(4)
+  val pr = new Prime()
 
   val intMax = 2147483647
   pr.run(intMax)

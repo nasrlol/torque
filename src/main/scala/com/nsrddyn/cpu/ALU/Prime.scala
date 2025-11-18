@@ -2,7 +2,7 @@ package com.nsrddyn
 
 
 
-class Prime(threads: Int) {
+class Prime() {
 
 
   /*
