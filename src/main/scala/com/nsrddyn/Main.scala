@@ -3,6 +3,7 @@ package com.nsrddyn
 object Torque {
 
   import java.time.Instant
+  import com.nsrddyn.alu.*
 
   @main def main(args: String*): Unit = 
 
@@ -15,6 +16,12 @@ object Torque {
 
   val pr = new Prime()
 
+  /*
   val intMax = 2147483647
   pr.run(intMax)
+  */
+
+  val intMax = 2147483647
+  println(pr.measure())
+
 }
