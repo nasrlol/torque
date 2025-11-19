@@ -1,4 +1,4 @@
-package com.nsrddyn
+package com.nsrddyn.alu
 
 import scala.util.hashing
 
