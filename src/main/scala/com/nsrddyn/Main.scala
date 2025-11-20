@@ -4,24 +4,23 @@ object Torque {
 
   import java.time.Instant
   import com.nsrddyn.alu.*
+  import com.nsrddyn.tools.Benchmark
 
   @main def main(args: String*): Unit = 
 
-  // ANSI ESCAPE CODE: clear screen
-  println("\u001b[2J\u001b[H")
-  println("--- TORQUE STRESS TESTING UTILITY ---")
+    val pr = new Prime()
+    val br = new Benchmark()
 
-  val now: Instant = Instant.now()
-  println(now)
+    // ANSI ESCAPE CODE: clear screen
+    println("\u001b[2J\u001b[H")
+    println("--- TORQUE STRESS TESTING UTILITY ---")
 
-  val pr = new Prime()
+    // val value = 2147483647
+    val value = 200000 
 
-  /*
-  val intMax = 2147483647
-  pr.run(intMax)
-  */
-
-  val intMax = 2147483647
-  println(pr.measure())
+    val time = br.measure(pr.run(value))
+    println(time)
 
 }
+
+
