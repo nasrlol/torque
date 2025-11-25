@@ -23,31 +23,24 @@ class CholeskyDecomposition {
    *  This is true because of the special case of A being a square, conjugate symmetric matrix. 
    */ 
 
-  def run(matrix: List[List[Int]]): Unit = {
+  def run(matrix: Vector[Vector[Int]]): Unit = {
 
-    val n: Int = matrix.size
+    val size: Int = matrix.size
+    val lower: ArrayBuffer[ArrayBuffer[Int]] = ArrayBuffer[ArrayBuffer[Int]]()
 
-    // store the lower triangular matrix
-    val lower = Vector[Vector[Int]]()
+    for 
+      i <- 0 to size 
+      j <- 0 until i 
+    do 
+      if i == j then lower(i)(j) = getSquaredSummation(lower, i, j, matrix) else lower(j)(j) = getReversedSummation(lower, i, j, matrix)
 
-
-    for (i <- 0 until n)
-    {
-      for (j <- 0 until i)
-        var sum: Double = 0
-
-        if j == i then
-        sum += math.pow(lowerBuffer(i)(j), 2)
-
-        end if 
-        lower(i)(j) = (sqrt(matrix(i)(j))())
-
-        j += 1
-    }
-    i += 1
   }
-  
-  def (matrix: Vector[Vector[Int]], index: int, jindex: int ): Int = if j == 1 then return math.pow(matrix(index)(jindex)) else 
 
-
+  private def getReversedSummation(lower: ArrayBuffer[ArrayBuffer[Int]], i: Int, j: Int, matrix: Vector[Vector[Int]]) = {
+    math.sqrt(matrix(j)(j) - (0 until j).map { k => lower(i)(k) * lower(j)(k) }.sum).toInt
+  }
+  private def getSquaredSummation(lower: ArrayBuffer[ArrayBuffer[Int]], i: Int, j: Int, matrix:  Vector[Vector[Int]]) = {
+    ((matrix(i)(j) - (0 until j).map { k => math.pow(lower(j)(k), 2)}.sum) / lower(j)(j)).toInt
+  }
 }
+

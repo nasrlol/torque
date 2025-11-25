@@ -8,9 +8,12 @@ class CholeskyDecompositionTest extends CholeskyDecomposition {
   def test(): Unit = {
 
     val cdp: CholeskyDecomposition = new  CholeskyDecomposition
-    val matrix: List[List[Int]] = List.empty[List[Int]]
+    val matrix: Vector[Vector[Int]] = Vector(Vector(1,2,3),Vector(1,2,3),Vector(1,2,3))
 
     println(cdp.run(matrix))
 
   }
+
+
+
 }
