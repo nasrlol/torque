@@ -2,8 +2,17 @@ package com.nsrddyn.Tests
 
 import com.nsrddyn.fpu.CholeskyDecomposition
 import scala.collection.immutable.ListSet
+import zio._
 
-class CholeskyDecompositionTest extends CholeskyDecomposition {
+class TestsRunner extends ZIOAppDefault {
+  
+  def run =
+    println("Hello world")
+
+
+}
+
+class CholeskyDecompositionTest  {
 
   def test(): Unit = {
 

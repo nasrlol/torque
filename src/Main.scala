@@ -11,18 +11,20 @@ enum Status:
   case FAIL 
 
 
-object Torque {
+object Torque extends ZIOAppDefault {
 
   println("hello world")
 
-  @main def main(args: String*): Unit =  {
-    // ANSI ESCAPE CODE: clear screen
-    println("\u001b[2J\u001b[H")
+  @main def main(args: String*): Unit =  { println("\u001b[2J\u001b[H")
     println("--- TORQUE STRESS TESTING UTILITY ---")
 
     var tester: CholeskyDecompositionTest = new CholeskyDecompositionTest
     println(tester.test())
 
   }
+
+  var p: Prime = new Prime
+  p.run()
+
 }
 
