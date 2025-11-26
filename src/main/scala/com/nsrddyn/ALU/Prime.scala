@@ -1,9 +1,9 @@
 package com.nsrddyn.alu
-
-
+import com.nsrddyn.alu.Prime
 import com.nsrddyn.tools.Benchmark
+import com.nsrddyn.test
 
-class Prime() extends Benchmark {
+class Prime() extends  {
 
   /*
    * Calculate all primes up to limit
@@ -40,3 +40,25 @@ class Prime() extends Benchmark {
 
 }
 
+
+
+
+class PrimeRunner extends Workload {
+
+  def run(threads: Int): Unit = {
+
+    val pr = new Prime()
+    val br = new Benchmark()
+
+    /*
+     * test cases
+     *
+     * 7919 true
+     * 2147483647 false
+     */
+
+    val time = pr.run(7919, true)
+    println(time)
+
+  } 
+}

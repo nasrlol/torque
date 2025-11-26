@@ -6,6 +6,11 @@ import java.time.Instant
 import com.nsrddyn.alu.*
 import com.nsrddyn.tools.Benchmark
 
+enum Status:
+  case PASS 
+  case FAIL 
+
+
 object Torque {
 
   println("hello world")
