@@ -1,4 +1,6 @@
-package com.nsrddyn.tools
+package main.tools
+
+import main.Ops.*
 
 class Benchmark {
   /* 
@@ -15,3 +17,26 @@ class Benchmark {
   // TODO: map this to an actual precision value
   def measurePrecision(work: => Boolean, expectedResult: Boolean): Unit = if work == expectedResult then println(true) else println(false) 
 }
+
+
+class PrimeRunner {
+
+
+  def run(threads: Int): Unit = {
+
+    val pr = new Prime()
+    val br = new Benchmark()
+
+    /*
+     * test cases
+     *
+     * 7919 true
+     * 2147483647 false
+     */
+
+    val time = pr.run(7919, true)
+    println(time)
+
+  } 
+}
+

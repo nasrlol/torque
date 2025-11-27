@@ -1,16 +1,9 @@
-package com.nsrddyn.Tests
+package main.Tests
 
-import com.nsrddyn.fpu.CholeskyDecomposition
 import scala.collection.immutable.ListSet
 import zio._
+import main.Ops.CholeskyDecomposition
 
-class TestsRunner extends ZIOAppDefault {
-  
-  def run =
-    println("Hello world")
-
-
-}
 
 class CholeskyDecompositionTest  {
 
@@ -22,7 +15,4 @@ class CholeskyDecompositionTest  {
     println(cdp.run(matrix))
 
   }
-
-
-
 }

@@ -1,4 +1,10 @@
-package com.nsrddyn.Traits
+package main.Traits
+
+import zio._
+
+enum Status:
+  case PASS 
+  case FAIL 
 
 trait Workload {
 

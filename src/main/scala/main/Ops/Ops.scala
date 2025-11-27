@@ -1,8 +1,10 @@
-package com.nsrddyn.ops
-import com.nsrddyn.tools.Benchmark
+package main.Ops
+
+import main.tools.Benchmark
+import main.Traits.*
+
 import scala.util.hashing
 import scala.util.hashing.MurmurHash3
-import  com.nsrddyn.Traits.*
 import scala.math._
 import scala.collection.immutable.ListSet
 import scala.collection.mutable.ArrayBuffer
@@ -41,34 +43,7 @@ class Prime()  {
 
     for i <- 0 to n do if isPrime(i) == result then println("true") else println("false") 
   }
-
-
 }
-
-
-
-
-class PrimeRunner {
-
-
-  def run(threads: Int): Unit = {
-
-    val pr = new Prime()
-    val br = new Benchmark()
-
-    /*
-     * test cases
-     *
-     * 7919 true
-     * 2147483647 false
-     */
-
-    val time = pr.run(7919, true)
-    println(time)
-
-  } 
-}
-
 
 class Hash {
 
@@ -91,7 +66,7 @@ class Hash {
      *
      */ 
 
-     for i <- 0 to loopSize do MurmurHash3.stringHash(word) 
+    for i <- 0 to loopSize do MurmurHash3.stringHash(word) 
 
   }
 }
@@ -121,10 +96,10 @@ class CholeskyDecomposition {
     val lower: ArrayBuffer[ArrayBuffer[Int]] = ArrayBuffer[ArrayBuffer[Int]]()
 
     for 
-      i <- 0 to size 
-      j <- 0 until i 
+    i <- 0 to size 
+    j <- 0 until i 
     do 
-      if i == j then lower(i)(j) = getSquaredSummation(lower, i, j, matrix) else lower(j)(j) = getReversedSummation(lower, i, j, matrix)
+    if i == j then lower(i)(j) = getSquaredSummation(lower, i, j, matrix) else lower(j)(j) = getReversedSummation(lower, i, j, matrix)
 
   }
 
