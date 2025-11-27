@@ -5,7 +5,7 @@ import zio._
 import main.Ops.CholeskyDecomposition
 
 
-class CholeskyDecompositionTest  {
+class CholeskyDecompositionRunner {
 
   def test(): Unit = {
 

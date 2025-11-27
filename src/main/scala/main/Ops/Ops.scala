@@ -31,18 +31,15 @@ class Prime()  {
    *       We want the function to be less optimized so that the CPU has more work == more stress 
    */
 
-
-  def isPrime(n: Int): Boolean = {
-    if n <= 1 then false
-    else !(2 to math.sqrt(n).toInt).exists(i => n % i  == 0)
-
-
-  }
-
   def run(n: Int, result: Boolean): Unit = {
-
     for i <- 0 to n do if isPrime(i) == result then println("true") else println("false") 
   }
+
+  private def isPrime(n: Int): Boolean = {
+    if n <= 1 then false
+    else !(2 to math.sqrt(n).toInt).exists(i => n % i  == 0)
+  }
+
 }
 
 class Hash {
