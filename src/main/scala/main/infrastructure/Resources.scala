@@ -1,8 +1,8 @@
-package main.Resources
+package main.infrastructure
 
-import main.Ops.*
-import main.Tests.*
-import main.Tools.*
+import main.domain._
+import main.services._
+import main.infrastructure._
 import oshi._ 
 import zio._
 

@@ -1,15 +1,16 @@
-package main.Runner
+package main.services
 
-import main.Ops.*
-import main.Tests.*
-import main.Tools.*
+import main.domain._
+import main.services._
 import oshi._
 import zio._
 
-class Runner {
 
-  val p = new Prime 
-  val cd = new CholeskyDecomposition
+enum Status:
+  case PASS
+  case FAIL
+
+class Stress(val status: Status) {
 
 
   def runCholeskyTest: ZIO[Any, Throwable, Unit] = {

@@ -1,10 +1,8 @@
-package main.Tools
+package main.services
 
-import main.Ops.*
-import main.Tests.*
-import main.Tools.*
-import oshi._
+import main.domain._
 import java.time.Instant
+import oshi._
 
 class Benchmark {
   /* 
@@ -22,25 +20,4 @@ class Benchmark {
   def measurePrecision(work: => Boolean, expectedResult: Boolean): Unit = if work == expectedResult then println(true) else println(false) 
 }
 
-
-class PrimeRunner {
-
-
-  def run(threads: Int): Unit = {
-
-    val pr = new Prime()
-    val br = new Benchmark()
-
-    /*
-     * test cases
-     *
-     * 7919 true
-     * 2147483647 false
-     */
-
-    val time = pr.run(7919, true)
-    println(time)
-
-  } 
-}
 

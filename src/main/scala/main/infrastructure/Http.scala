@@ -1,9 +1,16 @@
+package main.infrastructure
+
 import zio._
 import zio.http._
 
-// https://ziohttp.com/
+/** 
+ * HTTP Handler
+ * using ZIO 
+ *
+ *
+ *  source: https://ziohttp.com */
 
-object GreetingServer extends ZIOAppDefault {
+object Greeter extends ZIOAppDefault {
   val routes =
     Routes(
       Method.GET / "stability" -> handler { (req: Request) =>
