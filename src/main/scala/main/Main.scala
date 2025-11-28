@@ -6,7 +6,6 @@ import main.Tools.*
 import main.Runner.*
 import oshi._
 import zio._
-import main.tui.*
 
 
 /*
@@ -20,8 +19,6 @@ object Torque extends ZIOAppDefault {
 
   def run: ZIO[ZIOAppArgs & Scope, Any, Any] = {
     Console.printLine("=== TORQUE STRESS TEST ===") 
-    val uix: UserInputExample = new UserInputExample()
-    uix.execute()
     
   }
 
