@@ -12,3 +12,4 @@ libraryDependencies += "com.github.oshi" % "oshi-core" % "6.8.3"
 
 // http dependency
 libraryDependencies += "dev.zio" %% "zio-http" % "3.3.3"
+
