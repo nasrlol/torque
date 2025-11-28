@@ -1,7 +1,6 @@
 package main.Ops
 
-import main.tools.Benchmark
-import main.Traits.*
+import main.Tools.*
 
 import scala.util.hashing
 import scala.util.hashing.MurmurHash3
