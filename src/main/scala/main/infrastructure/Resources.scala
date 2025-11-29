@@ -33,4 +33,7 @@ class Resources {
       // println("temperature: " + sensors.getCpuTemperature())
     }
   }
+
+
+  // TODO: add method for viewing threads
 }
