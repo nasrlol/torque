@@ -1,7 +1,7 @@
 # torque
 A lightweight system stress-testing tool written in Scala.
 
-# Torque 🔧
+# Torque 
 
 A lightweight system stress-testing and performance monitoring tool written in Scala with ZIO.
 
@@ -144,4 +144,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Built with [ZIO](https://zio.dev/) for functional effects
 - Uses [OSHI](https://github.com/oshi/oshi) for system information
 - Inspired by stress testing tools like `Linkpack` and `PRIME95`
-```
