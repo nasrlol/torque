@@ -29,13 +29,11 @@ class MemoryAllocater {
    * adding an offset so that the next piece of memory wont be overlapping with the one we just assigned
    * */
 
-  def setValues(values: List[Int]): Unit = {
+  def setValues(values: List[Int], offset: Int): Unit = for i <- values.indices do memorySegment.set(ValueLayout.JAVA_INT, offset * i, values(i))
 
-    for i <- 0 until 10 do memorySegment.set(ValueLayout.JAVA_INT, offset * i, List[i]) 
-  }
-
-  def getValues: Unit = (0 until 10).map(i => memorySegment.get(ValueLayout.JAVA_INT, offset * i))
+  def getValues(offset: Int): Unit = (0 until 10).map(i => memorySegment.get(ValueLayout.JAVA_INT, offset * i))
   def deallocateMemory: Unit = arena.close()
 
   def run(): Unit =  println("address: " + memorySegment.address()) 
+
 }

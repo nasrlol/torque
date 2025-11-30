@@ -10,8 +10,19 @@ enum Status:
   case PASS
   case FAIL
 
-class Stress(val status: Status) {
+abstract class Stress {
 
+  def runSequential: ZIO[Any, Throwable, Unit]
+  def runParallel: ZIO[Any, Throwable, Unit]
+  def setStatus: Unit
+
+}
+
+class StressCpu() extends Stress {
+
+  var status: Status = Status.PASS
+
+  def setStatus: Unit = status = Status.PASS 
 
   def runCholeskyTest: ZIO[Any, Throwable, Unit] = {
     ZIO.attempt {
@@ -26,14 +37,14 @@ class Stress(val status: Status) {
     }.catchAll { error => Console.printError(s"failed: $error")}
   }
 
-  def runSequential: ZIO[Any, Throwable, Unit] = {
+  override def runSequential: ZIO[Any, Throwable, Unit] = {
 
     Console.printLine("sequential test") *>
     runCholeskyTest *>
     runPrimeTest
   }
 
-  def runParallel: ZIO[Any, Throwable, Unit] = {
+  override def runParallel: ZIO[Any, Throwable, Unit] = {
 
     Console.printLine("CholeskyTest") *>
     (runCholeskyTest <&> runPrimeTest).unit
@@ -41,3 +52,23 @@ class Stress(val status: Status) {
 
 }
 
+class StressRam() extends Stress {
+
+  var status: Status = Status.PASS
+
+  override def setStatus: Unit = status = Status.PASS 
+
+  override def runSequential: ZIO[Any, Throwable, Unit] = {
+    
+    ZIO.attempt {
+      // TODO: 
+    }.catchAll { error => Console.printError(s"failed: $error")}
+
+  }
+
+  override def runParallel : ZIO[Any, Throwable, Unit] = {
+    ZIO.attempt {
+
+    }.catchAll { error => Console.printError(s"failed: $error")}
+  }
+}
