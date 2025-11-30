@@ -1,6 +1,3 @@
-# torque
-A lightweight system stress-testing tool written in Scala.
-
 # Torque 
 
 A lightweight system stress-testing and performance monitoring tool written in Scala with ZIO.
