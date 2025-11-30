@@ -18,6 +18,8 @@ class Benchmark {
 
   // TODO: map this to an actual precision value
   def measurePrecision(work: => Boolean, expectedResult: Boolean): Unit = if work == expectedResult then println(true) else println(false) 
+
+  def measureStabililty(): Float = 1 / 10
 }
 
 
