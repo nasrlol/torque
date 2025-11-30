@@ -8,23 +8,36 @@ import zio._
 
 class Resources {
 
-  // Top levle instance 
-  val sysInfo: SystemInfo = new SystemInfo 
+  /**
+   *
+   * Creating instances for gathering the data 
+   *
+   */
+  private val sysInfo: SystemInfo = new SystemInfo 
+  private val hardware = sysInfo.getHardware
+  private val memory = hardware.getMemory
+  private val sensors = hardware.getSensors
+  private val cpu = hardware.getProcessor
 
-  val hardware = SysInfo.getHardware()
-  val sensors = SysInfo.getHardware.getSensors
-  val cpu = SysInfo.getHardware.getProcessor
 
-  def failSafe: Unit = while (true) do if sensors.getCpuTemperature > 80 then println("overheat")
+  /**
+   *
+   * Platform Mehtods
+   * */
 
   def getPlatform: ZIO[Any, Throwable, Unit] = {
     ZIO.attempt { 
-      println(SysInfo.getHardware)
+      println(sysInfo.getHardware)
     }.catchAll { error => Console.printError(s"failed :$error")}
   }
 
 
-  def getCpuFrequency: ZIO[Any, Throwable, Unit] = {
+  /**
+   *
+   * CPU methods
+   *
+   * */
+  def getCpuInfo: ZIO[Any, Throwable, Unit] = {
     ZIO.attempt {
       /*
        *  227 oshi/hardware/CentralProcessor.java
@@ -34,14 +47,28 @@ class Resources {
       println("logical cores: " + cpu.getLogicalProcessorCount())
       println("cores: " + cpu.getPhysicalProcessorCount())
       println("temperature: " + sensors.getCpuTemperature())
+
+
+      // TODO: assign the information in here to a method
     }
   }
 
 
-  def getMemoryUsage: ZIO[Any, Throwable, Unit] = {
-      
+  /**
+   *
+   * Memory specific methods
+   *
+   * */
 
+  def getRamInfo: ZIO[Any, Throwable, Unit] = {
+
+    ZIO.attempt { 
+
+      memory.getTotal()
+      val totalMemory = memory.getTotal()
+      println("total memory" +totalMemory)
+    }.catchAll { error => Console.printError(s"failed: $error")}
   }
-
-  // TODO: add method for viewing threads
 }
+
+// TODO: add method for viewing threads
