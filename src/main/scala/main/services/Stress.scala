@@ -17,6 +17,9 @@ abstract class Stress {
 // FOLLOW-UP: the tests are runnin, just getting an out of bounds exception when they do 
 class StressCpu() extends Stress {
 
+  /**
+   * CDP ZIO Stress test method
+   * */
   def runCholeskyTest: ZIO[Any, Throwable, Unit] = {
     val cd = new CholeskyDecomposition
     ZIO
@@ -24,27 +27,41 @@ class StressCpu() extends Stress {
         val matrix: Vector[Vector[Int]] = Vector(Vector(32480934, 3240994, 20394402), Vector(324234, 2342354, 5432432), Vector(340983, 12038, 9834))
         cd.run(matrix)
       }
-        .catchAll { error => Console.printError(s"failed: $error") }
+        .catchAll { error => Console.printError(s"failed cdp: $error") }
   }
 
+  /**
+   * Prime ZIO Stress test method
+   * */
   def runPrimeTest: ZIO[Any, Throwable, Unit] = {
     val p = new Prime
     ZIO
       .attempt {
         p.run(1000000000)
       }
-        .catchAll { error => Console.printError(s"failed: $error") }
+        .catchAll { error => Console.printError(s"failed prime: $error") }
+  }
+
+  /**
+   * Hash ZIO Stress test method
+   * */
+  def runHashTest: ZIO[Any, Throwable, Unit] = {
+    val h = new Hash
+    ZIO
+      .attempt {
+        h.run
+      }
+        .catchAll { error => Console.printError(s"failed hash: $error")}
   }
 
   override def runSequential: ZIO[Any, Throwable, Unit] = {
-    val r = runCholeskyTest *> runPrimeTest
-    r.repeat(Schedule.spaced(1.millis) && Schedule.upTo(1.hour)).unit
-
+    val r = runCholeskyTest *> runPrimeTest *> runHashTest
+    r.repeat(Schedule.spaced(1.millis).unit && Schedule.upTo(1.hour).unit) 
   }  
 
   override def runParallel: ZIO[Any, Throwable, Unit] = {
-    val r =  runCholeskyTest <&> runPrimeTest 
-    r.repeat(Schedule.spaced(1.millis) && Schedule.upTo(1.hour)).unit
+    val r =  runCholeskyTest <&> runPrimeTest <&> runHashTest
+    r.repeat(Schedule.spaced(1.millis).unit && Schedule.upTo(1.hour).unit) 
   } 
 }
 
@@ -70,10 +87,10 @@ class StressRam() extends Stress {
      * ZIO attempt which returns a [R, E, A]
      * */
     val r = ZIO.attempt { 
-        memoryAllocater.createMemorySegment
-        memoryAllocater.setValues(list, offset)
+      memoryAllocater.createMemorySegment
+      memoryAllocater.setValues(list, offset)
     } 
-    r.repeat(Schedule.recurs(1000).unit)
+    r.repeat(Schedule.spaced(1.millis).unit && Schedule.upTo(1.hour).unit) 
 
   }
 
@@ -99,9 +116,7 @@ class StressRam() extends Stress {
 
       memoryAllocater.createMemorySegment 
       memoryAllocater.setValues(list, offset) }
-      r.repeat(Schedule.recurs(1000).unit)
-
-
+      r.repeat(Schedule.recurs(1000).unit && Schedule.upTo(1.hour).unit) 
   }
 }
 
