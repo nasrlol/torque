@@ -79,12 +79,12 @@ class StressRam() extends Stress {
     val list: List[Int] = List(2030994, 493084, 43434, 43904 ,2103092, 230932)
     val offset: Int = 4
 
-    ZIO.attempt {
-
-      memoryAllocater.setValues(list, offset)
-      memoryAllocater.deallocateMemory
-
-    }.catchAll { error => Console.printError(s"failed: sequential memory error")}
+    /**
+     * The memory methods have a Unit return type so we wrap them in a 
+     * ZIO attempt which returns a [R, E, A]
+     * */
+    val r = ZIO.attempt { memoryAllocater.setValues(list, offset) } *> ZIO.attempt { memoryAllocater.deallocateMemory }
+    r.repeat(Schedule.forever.unit)
 
   }
 
@@ -95,26 +95,21 @@ class StressRam() extends Stress {
      * I wanted to set affinities per core but not there yet
      * source: https://zio.dev/overview/basic-concurrency/
      * */
-    ZIO.foreachPar(1 to 8) { 
-      /** 
-       * no need to save wich worked were on at the moment
-       *so were throwing it away with _ 
-      */ 
-      _ => ZIO.attemptBlocking {
+    val list = List.fill(6)(rand.nextInt(1000000) + 100000)
+    /**
+     * still setting an offset of 4 because 
+     * we are filling then memory with 4 byte integers
+     */
+    val offset = 4
 
-        val list = List.fill(6)(rand.nextInt(1000000) + 100000)
-        /**
-         * still setting an offset of 4 because 
-         * we are filling then memory with 4 byte integers
-         */
-        val offset = 4
-
-        memoryAllocater.setValues(list, offset)
-        memoryAllocater.deallocateMemory
+    /**
+     * The memory methods have a Unit return type so we wrap them in a 
+     * ZIO attempt which returns a [R, E, A]
+     * */
+    var r = ZIO.attempt { memoryAllocater.setValues(list, offset) } *> ZIO.attempt { memoryAllocater.deallocateMemory }
+    r.repeat(Schedule.forever.unit)
 
 
-      }.catchAll { error => Console.printError(s"failed: $error") }
-    }.unit
   }
 }
 

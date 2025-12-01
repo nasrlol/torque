@@ -38,7 +38,7 @@ trait CPU {
 class Prime extends CPU {
 
   def run(n: Int): Unit = {
-    for i <- 0 to n do if isPrime(i) == true then println("true") else println("false") 
+    for i <- 0 to n do isPrime(i) 
   }
 
   private def isPrime(n: Int): Boolean = {
