@@ -67,11 +67,8 @@ class Prime extends CPU {
  */ 
 
 class Hash extends CPU {
-
   def run(n: Int): Unit = {
-
     for i <- 0 to n do MurmurHash3.stringHash("a random string to hash") 
-
   }
 }
 

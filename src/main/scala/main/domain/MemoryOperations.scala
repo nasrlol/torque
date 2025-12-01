@@ -26,6 +26,11 @@ import scala.util.Using
 class MemoryAllocater {
 
 
+  /**
+   * = _ is deprecated, compiler tells me to use uninitialized values
+   * but when i try that it doesn't work so i'm stuck with the warning
+   * */
+
   private var arena: Arena = _
   private var memorySegment: MemorySegment = _
 
@@ -56,6 +61,7 @@ class MemoryAllocater {
        *
        * */
       arena  = Arena.global()
+      // convert one to long to have more  space
       memorySegment = arena.allocate(1024L * 1024 * 1024) // 1 GiB
 
     }
@@ -65,15 +71,18 @@ class MemoryAllocater {
   /**
    * Checks if arena is created if it isn't call the createMemorySegment method
    * Close the previous arena if there is one and initlizate values on a memory segment
+   *
+   * Note to self: there is  no need to be taking a baseOffset,
+   * we arent the ones defining the starting position of a memory segment
    * */
-  def setValues(values: List[Int], baseOffset: Int): Unit = {
+  def setValues(values: List[Int], offset: Int): Unit = {
     if this.arena == null then createMemorySegment
 
-    val stride = Integer.BYTES.toLong
-    val start  = baseOffset.toLong
+    // val stride = Integer.BYTES.toLong
+    // val start  = baseOffset.toLong
 
     for (i <- values.indices) {
-      val addr = start + (i * stride)
+      val addr = i * offset
       memorySegment.set(ValueLayout.JAVA_INT, addr, values(i))
     }
 
@@ -83,12 +92,17 @@ class MemoryAllocater {
    * Retrieves the set values that were initialized on
    * the off heap in the setValues method
    * */
+
+  /**
+   * Note to self: there is  no need to be taking a baseOffset,
+   * we arent the ones defining the starting position of a memory segment
+   * */
   def getValues(offset: Int, len: Int): List[Int] = {
 
-    val stride = Integer.BYTES.toLong
-    val start  = offset.toLong
+    // val stride = Integer.BYTES.toLong
+    // val start  = offset.toLong
     (0 until len).map { i =>
-      val addr = start + (i * stride)
+      val addr = i * offset 
       memorySegment.get(ValueLayout.JAVA_INT, addr)
     }.toList
   }

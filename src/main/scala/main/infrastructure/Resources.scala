@@ -73,5 +73,3 @@ class Resources {
     }
   }
 }
-
-// TODO: add method for viewing threads
