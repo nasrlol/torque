@@ -7,13 +7,11 @@ import scala.util.hashing.MurmurHash3
 import scala.math._
 import scala.collection.immutable.ListSet
 import scala.collection.mutable.ArrayBuffer
-
+import scala.util.Random._
 
 trait CPU {
 
-  
-
-} 
+}
 
   /*
    * Calculate all primes up to limit
@@ -67,8 +65,10 @@ class Prime extends CPU {
  */ 
 
 class Hash extends CPU {
-  def run(n: Int): Unit = {
-    for i <- 0 to n do MurmurHash3.stringHash("a random string to hash") 
+  def run: Unit = {
+    val string = nextString(10000000)
+    MurmurHash3.stringHash(string) 
+    println("nice hash")
   }
 }
 
@@ -94,12 +94,14 @@ class CholeskyDecomposition extends CPU {
 
   def run(matrix: Vector[Vector[Int]]): Unit = {
 
-    val size: Int = matrix.size
-    val lower: ArrayBuffer[ArrayBuffer[Int]] = ArrayBuffer[ArrayBuffer[Int]]()
+    val length = matrix.length
+    // preallocate the buffer, so that
+    // the rows get created before i start writing to them
+    val lower = ArrayBuffer.fill(length, length)(0)
 
     for 
-    i <- 0 to size 
-    j <- 0 until i 
+    i <- 0 until length 
+    j <- 0 to i 
     do 
     if i == j then lower(i)(j) = getSquaredSummation(lower, i, j, matrix) else lower(j)(j) = getReversedSummation(lower, i, j, matrix)
 
@@ -109,7 +111,7 @@ class CholeskyDecomposition extends CPU {
     math.sqrt(matrix(j)(j) - (0 until j).map { k => lower(i)(k) * lower(j)(k) }.sum).toInt
   }
   private def getSquaredSummation(lower: ArrayBuffer[ArrayBuffer[Int]], i: Int, j: Int, matrix:  Vector[Vector[Int]]) = {
-    ((matrix(i)(j) - (0 until j).map { k => math.pow(lower(j)(k), 2)}.sum) / lower(j)(j)).toInt
+    ((matrix(i)(j) - (0 until j).map { k => math.pow(lower(j)(k), 2)}.sum) / lower(i)(j)).toInt
   }
 }
 
