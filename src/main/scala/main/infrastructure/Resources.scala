@@ -20,7 +20,7 @@ class Resources {
   /**
    * Platform Mehtods
    * */
-  def getPlatform: Task[PlatformInfo] = {
+  def getPlatformInfo: Task[PlatformInfo] = {
     ZIO.attempt { 
       /**
        * Pass the OS version to the DTO to later transfer it over the API

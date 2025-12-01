@@ -25,6 +25,7 @@ object Torque extends ZIOAppDefault with Runner  {
 
     val v: View = new View
     v.serveView
+    httpHandler
   }
 
 
@@ -32,11 +33,5 @@ object Torque extends ZIOAppDefault with Runner  {
    * This method runs after the UI finishes which means that the stress tests also finished
    * Which allows us to post the gathered data to the API
    * */
-
-  def runHttp: Unit = {
-
-
-
-  }
 
 }

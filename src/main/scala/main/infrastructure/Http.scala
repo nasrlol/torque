@@ -12,10 +12,11 @@ import main.domain._
  *
  *  source: https://ziohttp.com */
 
- def httpHandler(cpu: CpuInfo, ram: RamInfo, platform: PlatformInfo): Unit = {
+ def httpHandler: ZIO[Any, Throwable, Unit] = {
+   ZIO.attempt {
+     Server.serve(routes)
+       .provide(Server.default)
+       .exitCode
 
-   Server.serve(routes)
-     .provide(Server.default)
-     .exitCode
-
+   }
  }
