@@ -17,18 +17,6 @@ abstract class Stress {
 // FOLLOW-UP: the tests are runnin, just getting an out of bounds exception when they do 
 class StressCpu() extends Stress {
 
-  override def runSequential: ZIO[Any, Throwable, Unit] = {
-    val r = runCholeskyTest *> runPrimeTest
-    r.repeat(Schedule.forever.unit)
-
-  }  
-
-  override def runParallel: ZIO[Any, Throwable, Unit] = {
-    val r =  runCholeskyTest <&> runPrimeTest 
-    r.repeat(Schedule.forever.unit)
-
-  } 
-
   def runCholeskyTest: ZIO[Any, Throwable, Unit] = {
     val cd = new CholeskyDecomposition
     ZIO
@@ -43,32 +31,27 @@ class StressCpu() extends Stress {
     val p = new Prime
     ZIO
       .attempt {
-        p.run(390483094)
+        p.run(1000000000)
       }
         .catchAll { error => Console.printError(s"failed: $error") }
   }
 
+  override def runSequential: ZIO[Any, Throwable, Unit] = {
+    val r = runCholeskyTest *> runPrimeTest
+    r.repeat(Schedule.spaced(1.millis) && Schedule.upTo(1.hour)).unit
 
+  }  
 
-  def safety: ZIO[Unit, Throwable, Unit] = {
-    val systemInfo = new SystemInfo 
-    val sensors =  systemInfo.getHardware.getSensors
-    ZIO.attempt {
-      while (true) do 
-      if sensors.getCpuTemperature > 80 then println("overheat")
-    }.catchAll { error => Console.printError(s"failed: $error") }
-  }
-
-
-
+  override def runParallel: ZIO[Any, Throwable, Unit] = {
+    val r =  runCholeskyTest <&> runPrimeTest 
+    r.repeat(Schedule.spaced(1.millis) && Schedule.upTo(1.hour)).unit
+  } 
 }
 
 class StressRam() extends Stress {
 
   private val memoryAllocater = new MemoryAllocater
   private val rand = new scala.util.Random 
-  // TODO: set the status upon a pass or fail
-  // private var status: Status = false 
 
   /**
    *
@@ -87,10 +70,10 @@ class StressRam() extends Stress {
      * ZIO attempt which returns a [R, E, A]
      * */
     val r = ZIO.attempt { 
-      memoryAllocater.createMemorySegment
-    memoryAllocater.setValues(list, offset) } *>
-    ZIO.attempt { memoryAllocater.deallocateMemory }
-    r.repeat(Schedule.forever).unit
+        memoryAllocater.createMemorySegment
+        memoryAllocater.setValues(list, offset)
+    } 
+    r.repeat(Schedule.recurs(1000).unit)
 
   }
 
@@ -115,9 +98,8 @@ class StressRam() extends Stress {
     var r = ZIO.attempt { 
 
       memoryAllocater.createMemorySegment 
-    memoryAllocater.setValues(list, offset) } *>
-    ZIO.attempt { memoryAllocater.deallocateMemory }
-    r.repeat(Schedule.forever).unit
+      memoryAllocater.setValues(list, offset) }
+      r.repeat(Schedule.recurs(1000).unit)
 
 
   }
@@ -139,6 +121,7 @@ trait Runner {
 
     } yield ()
   }
+
 
   def lightCpuRun: Task[Unit] = {
 
@@ -165,7 +148,8 @@ trait Runner {
 
     for { 
 
-      _ <- r.runSequential
+      sq <- r.runSequential.fork
+      _ <- sq.join
 
     } yield()
   } 
