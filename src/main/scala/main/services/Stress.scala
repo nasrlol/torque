@@ -13,7 +13,8 @@ abstract class Stress {
 
 }
 
-// TODO: program is exiting without completing the tests, my guess is it has something to do with ZIO Fiber forks
+// FOLLOW-UP NEEDED: program is exiting without completing the tests, my guess is it has something to do with ZIO Fiber forks
+// FOLLOW-UP: the tests are runnin, just getting an out of bounds exception when they do 
 class StressCpu() extends Stress {
 
   override def runSequential: ZIO[Any, Throwable, Unit] = {
@@ -27,17 +28,6 @@ class StressCpu() extends Stress {
     r.repeat(Schedule.forever.unit)
 
   } 
-
-
-  def safety: ZIO[Unit, Throwable, Unit] = {
-    val systemInfo = new SystemInfo 
-    val sensors =  systemInfo.getHardware.getSensors
-    ZIO.attempt {
-      while (true) do 
-      if sensors.getCpuTemperature > 80 then println("overheat")
-    }.catchAll { error => Console.printError(s"failed: $error") }
-  }
-
 
   def runCholeskyTest: ZIO[Any, Throwable, Unit] = {
     val cd = new CholeskyDecomposition
@@ -57,6 +47,18 @@ class StressCpu() extends Stress {
       }
         .catchAll { error => Console.printError(s"failed: $error") }
   }
+
+
+
+  def safety: ZIO[Unit, Throwable, Unit] = {
+    val systemInfo = new SystemInfo 
+    val sensors =  systemInfo.getHardware.getSensors
+    ZIO.attempt {
+      while (true) do 
+      if sensors.getCpuTemperature > 80 then println("overheat")
+    }.catchAll { error => Console.printError(s"failed: $error") }
+  }
+
 
 
 }
@@ -151,9 +153,10 @@ trait Runner {
   def heavyRamRun: Task[Unit] = {
 
     for {
-      _ <- r.runParallel
-      _ <- r.runSequential 
-      _ <- r.runParallel
+      par <- r.runParallel.fork
+      seq <- r.runSequential.fork
+      _ <- par.join
+      _ <- seq.join
     } yield()
   }
 

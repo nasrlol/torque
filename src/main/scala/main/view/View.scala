@@ -82,11 +82,20 @@ class View extends Runner {
     val sensors = hardware.getSensors
     val cpu = hardware.getProcessor
 
-    println("load: " + cpu.getSystemCpuLoad(1000) * 1000)
-    println("logical cores: " + cpu.getLogicalProcessorCount())
-    println("cores: " + cpu.getPhysicalProcessorCount())
-    println("temperature: " + sensors.getCpuTemperature())
-
+    ZIO.attempt {
+      println(s"""
+    ===================================================
+    || CPU Load:        ${cpu.getSystemCpuLoad(1000) * 100}%
+    || Logical Cores:   ${cpu.getLogicalProcessorCount()}
+    || Physical Cores:  ${cpu.getPhysicalProcessorCount()}
+    || Temperature:     ${sensors.getCpuTemperature()}°C
+    || Total RAM:       ${memory.getTotal() / (1024.0 * 1024 * 1024)} GB
+    || Available RAM:   ${memory.getAvailable() / (1024.0 * 1024 * 1024)} GB
+    ===================================================
+      """.stripMargin)
+  pressToContinue
+      pressToContinue
+    }
 
   } 
 
@@ -126,12 +135,13 @@ class View extends Runner {
     clearScreen
     toInt(target) match {
 
-      case 1 =>  lightCpuRun <&> ZIO.attempt { resourcesView }
+      case 1 => lightCpuRun
       case 2 => heavyCpuRun
       case 3 => lightCpuRun
       case 4 => heavyCpuRun
 
     }
+    resourcesView
   } 
 
   def serveView: ZIO[Any, Throwable, Unit] = {
