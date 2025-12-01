@@ -47,7 +47,7 @@ TODO: Explanation on how to run the tests
 
 The server will start on `http://localhost:8080` with the following endpoints:
 
-- `GET /` - API status
+- `GET /platform` - API status
 - `GET /cpu` - CPU performance metrics and stress testing
 - `GET /ram` - RAM usage metrics and memory allocation tests
 
@@ -108,19 +108,6 @@ Torque is built using modern Scala functional programming patterns:
 ```bash
 sbt compile
 ```
-
-### Creating a Fat JAR
-
-```bash
-sbt assembly
-```
-
-## Configuration
-
-Torque can be configured via environment variables:
-
-- `TORQUE_PORT` - HTTP server port (default: 8080)
-- `TORQUE_HOST` - Server host (default: localhost)
 
 ## API Documentation
 
