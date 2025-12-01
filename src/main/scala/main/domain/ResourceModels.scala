@@ -9,6 +9,7 @@ package main.domain
 
 enum Status: 
   case PASS
+  case RUNNING
   case FAIL
 
 case class CpuInfo(load: Double, temperature: Double, cores: Int, physicalCores: Int, status: Status)

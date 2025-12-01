@@ -2,7 +2,7 @@ package main.domain
 
 import main.services._
 import scala.util.hashing
-import scala.util.hashing.MurmurHash3 
+import scala.util.hashing.MurmurHash3
 import scala.collection.immutable.ListSet
 import scala.math._
 import java.lang.foreign._
@@ -19,22 +19,45 @@ import scala.util.Using
  * https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/foreign/package-summary.html
  * */
 
+case class Memory (arena: Arena, memorySegment: MemorySegment)
+
+
 class MemoryAllocater {
 
-  private val address: String = null 
-  private val arena: Arena = Arena.global()
-  // TODO: get user to define the size to allocate
-  private val memorySegment = arena.allocate(1024 * 1024 * 1024)
+
+  private var arena: Arena = _
+  private var memorySegment: MemorySegment = _
 
   /**
    * adding an offset so that the next piece of memory wont be overlapping with the one we just assigned
    * */
 
-  def setValues(values: List[Int], offset: Int): Unit = for i <- values.indices do memorySegment.set(ValueLayout.JAVA_INT, offset * i, values(i))
+  def createMemorySegment: Memory = Memory ( arena = Arena.ofConfined(), memorySegment = arena.allocate(1024 * 1024 * 1024))
 
-  def getValues(offset: Int): Unit = (0 until 10).map(i => memorySegment.get(ValueLayout.JAVA_INT, offset * i))
-  def deallocateMemory: Unit = arena.close()
+  def setValues(values: List[Int], baseOffset: Int): Unit = {
 
-  def run(): Unit =  println("address: " + memorySegment.address()) 
+    val stride = Integer.BYTES.toLong
+    val start  = baseOffset.toLong
+
+    for (i <- values.indices) {
+      val addr = start + (i * stride)
+      memorySegment.set(ValueLayout.JAVA_INT, addr, values(i))
+    }
+
+  }
+
+  def getValues(offset: Int, len: Int): List[Int] = {
+
+    val stride = Integer.BYTES.toLong
+    val start  = offset.toLong
+    (0 until len).map { i =>
+      val addr = start + (i * stride)
+      memorySegment.get(ValueLayout.JAVA_INT, addr)
+    }.toList
+  }
+
+  def deallocateMemory: Unit = if arena != null then arena.close()
+
+  def run(): Unit =  println("address: " + memorySegment.address())
 
 }

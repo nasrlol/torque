@@ -14,7 +14,6 @@ import main.domain._
 
  def httpHandler(cpu: CpuInfo, ram: RamInfo, platform: PlatformInfo): Unit = {
 
-
    Server.serve(routes)
      .provide(Server.default)
      .exitCode

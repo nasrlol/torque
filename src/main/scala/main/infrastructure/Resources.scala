@@ -20,43 +20,67 @@ class Resources {
   /**
    * Platform Mehtods
    * */
-  def getPlatform: ZIO[Any, Throwable, Unit] = {
+  def getPlatform: Task[PlatformInfo] = {
     ZIO.attempt { 
-      println(sysInfo.getHardware)
-    }.catchAll { error => Console.printError(s"failed :$error")}
+      /**
+       * Pass the OS version to the DTO to later transfer it over the API
+       **/
+      PlatformInfo ( currentPlatform = sysInfo.getHardware.toString )
+    }
   }
 
 
   /**
    * CPU methods
    * */
-  def getCpuInfo: ZIO[Any, Throwable, Unit] = {
+  def getCpuInfo: Task[CpuInfo] = {
     ZIO.attempt {
       /*
        *  227 oshi/hardware/CentralProcessor.java
        *  method takes long value as delay
        * */
-      println("load: " + cpu.getSystemCpuLoad(1000) * 1000)
-      println("logical cores: " + cpu.getLogicalProcessorCount())
-      println("cores: " + cpu.getPhysicalProcessorCount())
-      println("temperature: " + sensors.getCpuTemperature())
 
+      CpuInfo (
+        load = cpu.getSystemCpuLoad(1000) * 1000,
+        temperature = sensors.getCpuTemperature(),
+        cores = cpu.getLogicalProcessorCount(),
+        physicalCores = cpu.getPhysicalProcessorCount() ,
 
-      // TODO: assign the information in here to a method
+        /**
+         * I will propably call this method when i'm about to run 
+         * a stress test so it's safe to set it to RUNNING
+         * */
+        status = Status.RUNNING
+      )
     }
   }
+
+
+  /**
+   *
+   * When CPU's can't handle theyre current clock they often drop 
+   * clock speed
+   * This runs a check to see if it's stable in that aspect
+   * */
+  // TODO: complete this together with the safety check
+  // def compareCpuFrequencyToMax: ZIO[Any, Throwable, Boolean] = if cpu.getMaxFreq() > cpu.getCurrentFreq() then false else true 
+  // def compareCpuVolege: ZIO[Any, Throwable, Boolean] = if sensors.getCpuVoltage()  
 
   /**
    * Memory specific methods
    * */
-  def getRamInfo: ZIO[Any, Throwable, Unit] = {
+  def getRamInfo: Task[RamInfo] = {
 
     ZIO.attempt { 
 
-      memory.getTotal()
       val totalMemory = memory.getTotal()
-      println("total memory" +totalMemory)
-    }.catchAll { error => Console.printError(s"failed: $error")}
+
+      RamInfo (
+        usage = totalMemory - memory.getAvailable().toDouble,
+        total = totalMemory,
+        status = Status.RUNNING
+      )
+    }
   }
 }
 

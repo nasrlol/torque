@@ -4,6 +4,7 @@ import zio._
 import main.infrastructure._
 import main.services._
 import java.lang.System
+import oshi._
 
 /**
  *
@@ -45,12 +46,12 @@ class View extends Runner {
 
     println(
       """
-     _/  |_  ___________  ________ __   ____  
-     \   __\/  _ \_  __ \/ ____/  |  \_/ __ \ 
+      _/  |_  ___________  ________ __   ____  
+      \   __\/  _ \_  __ \/ ____/  |  \_/ __ \ 
       |  | (  <_> )  | \< <_|  |  |  /\  ___/ 
       |__|  \____/|__|   \__   |____/  \___  >
-                           |__|           \/ 
- 
+      |__|           \/ 
+
       |========== Welcome to Torque ==========|
       |    Cpu and Ram Stress testing tool    |
       |    in Scala                           |
@@ -58,7 +59,7 @@ class View extends Runner {
       |=======================================|
       """
     ) 
-    pressToContinue
+  pressToContinue
   }
 
   /**
@@ -74,6 +75,22 @@ class View extends Runner {
     }
   }
 
+  def resourcesView: ZIO[Any, Throwable, Unit] = {
+    val sysInfo: SystemInfo = new SystemInfo 
+    val hardware = sysInfo.getHardware
+    val memory = hardware.getMemory
+    val sensors = hardware.getSensors
+    val cpu = hardware.getProcessor
+
+    println("load: " + cpu.getSystemCpuLoad(1000) * 1000)
+    println("logical cores: " + cpu.getLogicalProcessorCount())
+    println("cores: " + cpu.getPhysicalProcessorCount())
+    println("temperature: " + sensors.getCpuTemperature())
+
+
+  } 
+
+
   def menu: ZIO[Any, Throwable, Unit] = {
 
     var continue = true
@@ -86,12 +103,12 @@ class View extends Runner {
       println(
 
         """
-       _/  |_  ___________  ________ __   ____  
-       \   __\/  _ \_  __ \/ ____/  |  \_/ __ \ 
+        _/  |_  ___________  ________ __   ____  
+        \   __\/  _ \_  __ \/ ____/  |  \_/ __ \ 
         |  | (  <_> )  | \< <_|  |  |  /\  ___/ 
         |__|  \____/|__|   \__   |____/  \___ >
-                             |__|           \/ 
-                             
+        |__|           \/ 
+
         |======= Select the stress test ========|
         | 1: light Cpu                          | 
         | 2: Heavy Cpu                          | 
@@ -99,7 +116,7 @@ class View extends Runner {
         | 4: Heavy Ram                          | 
         | 5: Exit                               | 
         |=======================================|
-   
+
         """
       ) 
       target = scala.io.StdIn.readLine()
@@ -109,11 +126,10 @@ class View extends Runner {
     clearScreen
     toInt(target) match {
 
-      case 1 => lightCpuRun <&> resources.getCpuInfo
-      case 2 => heavyCpuRun <&> resources.getCpuInfo
-      case 3 => lightCpuRun <&> resources.getRamInfo
-      case 4 => heavyCpuRun <&> resources.getRamInfo
-
+      case 1 =>  lightCpuRun <&> ZIO.attempt { resourcesView }
+      case 2 => heavyCpuRun
+      case 3 => lightCpuRun
+      case 4 => heavyCpuRun
 
     }
   } 

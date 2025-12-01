@@ -33,7 +33,8 @@ class StressCpu() extends Stress {
     val systemInfo = new SystemInfo 
     val sensors =  systemInfo.getHardware.getSensors
     ZIO.attempt {
-      while (true) do if sensors.getCpuTemperature > 80 then println("overheat")
+      while (true) do 
+      if sensors.getCpuTemperature > 80 then println("overheat")
     }.catchAll { error => Console.printError(s"failed: $error") }
   }
 
@@ -83,8 +84,11 @@ class StressRam() extends Stress {
      * The memory methods have a Unit return type so we wrap them in a 
      * ZIO attempt which returns a [R, E, A]
      * */
-    val r = ZIO.attempt { memoryAllocater.setValues(list, offset) } *> ZIO.attempt { memoryAllocater.deallocateMemory }
-    r.repeat(Schedule.forever.unit)
+    val r = ZIO.attempt { 
+      memoryAllocater.createMemorySegment
+    memoryAllocater.setValues(list, offset) } *>
+    ZIO.attempt { memoryAllocater.deallocateMemory }
+    r.repeat(Schedule.forever).unit
 
   }
 
@@ -106,8 +110,12 @@ class StressRam() extends Stress {
      * The memory methods have a Unit return type so we wrap them in a 
      * ZIO attempt which returns a [R, E, A]
      * */
-    var r = ZIO.attempt { memoryAllocater.setValues(list, offset) } *> ZIO.attempt { memoryAllocater.deallocateMemory }
-    r.repeat(Schedule.forever.unit)
+    var r = ZIO.attempt { 
+
+      memoryAllocater.createMemorySegment 
+    memoryAllocater.setValues(list, offset) } *>
+    ZIO.attempt { memoryAllocater.deallocateMemory }
+    r.repeat(Schedule.forever).unit
 
 
   }
@@ -120,14 +128,14 @@ trait Runner {
 
   def heavyCpuRun: Task[Unit] = {
 
-      for {
+    for {
 
-        par <- c.runParallel.fork
-        seq <- c.runSequential.fork 
-        _ <- par.join
-        _ <- seq.join
+      par <- c.runParallel.fork
+      seq <- c.runSequential.fork 
+      _ <- par.join
+      _ <- seq.join
 
-      } yield ()
+    } yield ()
   }
 
   def lightCpuRun: Task[Unit] = {
