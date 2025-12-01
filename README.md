@@ -1,4 +1,4 @@
-# Torque 
+# Torque - DO NOT RUN OUTSIDE OF A VIRTUAL MACHINE
 
 A lightweight system stress-testing and performance monitoring tool written in Scala with ZIO.
 
