@@ -27,14 +27,12 @@ class View extends Runner {
    * General utils that will be used a lot later
    * */
 
-  def clearScreen: Unit = print("\u001b[H\u001b[2J")
+  /**
+   * ASCII code that clears terminal screen
+   * source: https://stackoverflow.com/questions/56608263/how-to-clear-terminal-screen-in-scala 
+  */
 
-  def pressToContinue: Unit = {
-    println("\nPress enter to continue") 
-    scala.io.StdIn.readLine()
-  }
-
-
+  def pressToContinue: Task[Unit] = Console.printLine("\nPress enter to continue") *> Console.readLine.unit
 
   /**
    * Multi line println for a nice UI 
@@ -42,9 +40,9 @@ class View extends Runner {
    * source: https://docs.scala-lang.org/scala3/book/first-look-at-types.html#strings
    * */ 
 
-  def header: Unit =  {
+  def header: Task[Unit] =  {
 
-    println(
+    Console.printLine(
       """
       _/  |_  ___________  ________ __   ____  
       \   __\/  _ \_  __ \/ ____/  |  \_/ __ \ 
@@ -58,8 +56,7 @@ class View extends Runner {
       |    Author: Abdellah El Morabit        |
       |=======================================|
       """
-    ) 
-  pressToContinue
+  ) *> pressToContinue 
   }
 
   /**
@@ -70,8 +67,8 @@ class View extends Runner {
     try {
       stringInput.toInt
     } catch {
-      // return 3 to exit the program
-      case e: Exception => 3
+      // return 6 to exit the program
+      case e: Exception => 6
     }
   }
 
@@ -83,70 +80,65 @@ class View extends Runner {
     val cpu = hardware.getProcessor
 
     ZIO.attempt {
+      Console.printLine("\u001b[2J")
       println(s"""
-    ===================================================
-    || CPU Load:        ${cpu.getSystemCpuLoad(1000) * 100}%
-    || Logical Cores:   ${cpu.getLogicalProcessorCount()}
-    || Physical Cores:  ${cpu.getPhysicalProcessorCount()}
-    || Temperature:     ${sensors.getCpuTemperature()}°C
-    || Total RAM:       ${memory.getTotal() / (1024.0 * 1024 * 1024)} GB
-    || Available RAM:   ${memory.getAvailable() / (1024.0 * 1024 * 1024)} GB
-    ===================================================
-      """.stripMargin)
-  pressToContinue
-      pressToContinue
-    }
-
+        ===================================================
+          || CPU Load:        ${cpu.getSystemCpuLoad(1000) * 100}%
+          || Logical Cores:   ${cpu.getLogicalProcessorCount()}
+          || Physical Cores:  ${cpu.getPhysicalProcessorCount()}
+          || Temperature:     ${sensors.getCpuTemperature()}°C
+          || Total RAM:       ${memory.getTotal() / (1024.0 * 1024 * 1024)} GB
+          || Available RAM:   ${memory.getAvailable() / (1024.0 * 1024 * 1024)} GB
+          ===================================================
+            """.stripMargin)
+    } *> pressToContinue
   } 
 
+  def menuDesign: Task[Unit] = {
+
+    ZIO.attempt {
+        Console.printLine("\u001b[2J")
+        println(
+
+      """
+      _/  |_  ___________  ________ __   ____  
+      \   __\/  _ \_  __ \/ ____/  |  \_/ __ \ 
+      |  | (  <_> )  | \< <_|  |  |  /\  ___/ 
+      |__|  \____/|__|   \__   |____/  \___ >
+      |__|           \/ 
+
+      |======= Select the stress test ========|
+      | 1: light Cpu                          | 
+      | 2: Heavy Cpu                          | 
+      | 3: Light Ram                          | 
+      | 4: Heavy Ram                          | 
+      | 5: Http                               | 
+      | 6: Exit                               | 
+      |=======================================|
+
+      """
+    ) 
+    }
+  }
 
   def menu: ZIO[Any, Throwable, Unit] = {
-
-    var continue = true
-    var target = ""
-
-    while (continue) {
-
-      Thread.sleep(500)
-      clearScreen
-      println(
-
-        """
-        _/  |_  ___________  ________ __   ____  
-        \   __\/  _ \_  __ \/ ____/  |  \_/ __ \ 
-        |  | (  <_> )  | \< <_|  |  |  /\  ___/ 
-        |__|  \____/|__|   \__   |____/  \___ >
-        |__|           \/ 
-
-        |======= Select the stress test ========|
-        | 1: light Cpu                          | 
-        | 2: Heavy Cpu                          | 
-        | 3: Light Ram                          | 
-        | 4: Heavy Ram                          | 
-        | 5: Exit                               | 
-        |=======================================|
-
-        """
-      ) 
-      target = scala.io.StdIn.readLine()
-      continue = false
-    }
-
-    clearScreen
-    toInt(target) match {
-
-      case 1 => lightCpuRun
-      case 2 => heavyCpuRun
-      case 3 => lightCpuRun
-      case 4 => heavyCpuRun
-
-    }
-    resourcesView
-  } 
-
-  def serveView: ZIO[Any, Throwable, Unit] = {
-    clearScreen
-    header
-    menu
+    for {
+      _ <- menuDesign
+      input <- Console.readLine("Enter your choice: ")
+      _ <- toInt(input) match {
+        case 1 => lightCpuRun *> resourcesView *> menu
+        case 2 => heavyCpuRun *> resourcesView *> menu
+        case 3 => lightRamRun *> resourcesView *> menu
+        case 4 => heavyRamRun *> resourcesView *> menu
+        case 5 => httpHandler *> resourcesView *> menu
+        case 6 => Console.printLine("Exiting...") *> ZIO.succeed(System.exit(0))
+        case _ => Console.printLine("Invalid choice") *> pressToContinue *> menu
+      }
+    } yield ()
   }
+
+def serveView: ZIO[Any, Throwable, Unit] =  header *> menu 
+
+
 }
+
