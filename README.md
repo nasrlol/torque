@@ -3,7 +3,7 @@
 A lightweight system stress-testing and performance monitoring tool written in Scala with ZIO.
 
 Scala
-ZIO Fibers
+ZIO Combinators / Fibers
 ZIO HTTP
 OSHI
 
