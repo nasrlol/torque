@@ -11,9 +11,9 @@ import scala.collection.mutable.ArrayBuffer
 
 trait CPU {
 
+  
 
 } 
-
 
   /*
    * Calculate all primes up to limit

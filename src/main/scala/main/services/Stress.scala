@@ -16,11 +16,25 @@ abstract class Stress {
 // TODO: program is exiting without completing the tests, my guess is it has something to do with ZIO Fiber forks
 class StressCpu() extends Stress {
 
+  override def runSequential: ZIO[Any, Throwable, Unit] = {
+    val r = runCholeskyTest *> runPrimeTest
+    r.repeat(Schedule.forever.unit)
 
-  def safety: Unit = {
+  }  
+
+  override def runParallel: ZIO[Any, Throwable, Unit] = {
+    val r =  runCholeskyTest <&> runPrimeTest 
+    r.repeat(Schedule.forever.unit)
+
+  } 
+
+
+  def safety: ZIO[Unit, Throwable, Unit] = {
     val systemInfo = new SystemInfo 
     val sensors =  systemInfo.getHardware.getSensors
-    while (true) do if sensors.getCpuTemperature > 80 then println("overheat")
+    ZIO.attempt {
+      while (true) do if sensors.getCpuTemperature > 80 then println("overheat")
+    }.catchAll { error => Console.printError(s"failed: $error") }
   }
 
 
@@ -43,18 +57,6 @@ class StressCpu() extends Stress {
         .catchAll { error => Console.printError(s"failed: $error") }
   }
 
-  override def runSequential: ZIO[Any, Throwable, Unit] = {
-
-    Console.printLine("sequential test") *>
-    runCholeskyTest *>
-    runPrimeTest
-  }
-
-  override def runParallel: ZIO[Any, Throwable, Unit] = {
-
-    Console.printLine("CholeskyTest") *>
-    (runCholeskyTest <&> runPrimeTest).unit
-  }
 
 }
 
@@ -125,18 +127,20 @@ trait Runner {
 
       for {
 
-        _ <- c.runParallel
-        _ <- c.runSequential 
-        _ <- c.runParallel
+        par <- c.runParallel.fork
+        seq <- c.runSequential.fork 
+        _ <- par.join
+        _ <- seq.join
 
-      } yield()
+      } yield ()
   }
 
   def lightCpuRun: Task[Unit] = {
 
     for { 
 
-      _ <- c.runSequential
+      seq <- c.runSequential.fork
+      _ <- seq.join
 
     } yield()
   } 
