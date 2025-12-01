@@ -23,6 +23,7 @@ class MemoryAllocater {
 
   private val address: String = null 
   private val arena: Arena = Arena.global()
+  // TODO: get user to define the size to allocate
   private val memorySegment = arena.allocate(1024 * 1024 * 1024)
 
   /**

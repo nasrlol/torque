@@ -14,7 +14,6 @@ import main.services._
 import main.infrastructure._
 import main.view._
 import oshi._
-import zio.http._
 import java.lang.foreign._
 import zio._
 
@@ -40,11 +39,6 @@ object Torque extends ZIOAppDefault with Runner  {
 
   }
 
-  def serve = {
-    Server.serve(routes)
-      .provide(Server.default)
-      .exitCode
-  }
 
   /**
    *

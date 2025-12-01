@@ -9,9 +9,7 @@ import zio._
 class Resources {
 
   /**
-   *
    * Creating instances for gathering the data 
-   *
    */
   private val sysInfo: SystemInfo = new SystemInfo 
   private val hardware = sysInfo.getHardware
@@ -19,12 +17,9 @@ class Resources {
   private val sensors = hardware.getSensors
   private val cpu = hardware.getProcessor
 
-
   /**
-   *
    * Platform Mehtods
    * */
-
   def getPlatform: ZIO[Any, Throwable, Unit] = {
     ZIO.attempt { 
       println(sysInfo.getHardware)
@@ -33,9 +28,7 @@ class Resources {
 
 
   /**
-   *
    * CPU methods
-   *
    * */
   def getCpuInfo: ZIO[Any, Throwable, Unit] = {
     ZIO.attempt {
@@ -53,13 +46,9 @@ class Resources {
     }
   }
 
-
   /**
-   *
    * Memory specific methods
-   *
    * */
-
   def getRamInfo: ZIO[Any, Throwable, Unit] = {
 
     ZIO.attempt { 

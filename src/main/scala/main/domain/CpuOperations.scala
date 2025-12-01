@@ -32,6 +32,7 @@ trait CPU {
   /*
    * TODO: I did the countrary of what i wanted to accieve with the is prime function
    *       We want the function to be less optimized so that the CPU has more work == more stress 
+   * TODO: Assert if the prime number was found or not
    */
 
 class Prime extends CPU {
