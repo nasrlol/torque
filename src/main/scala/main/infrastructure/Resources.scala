@@ -25,7 +25,7 @@ class Resources {
       /**
        * Pass the OS version to the DTO to later transfer it over the API
        **/
-      PlatformInfo ( currentPlatform = sysInfo.getHardware.toString )
+      PlatformInfo ( currentPlatform = sysInfo.getOperatingSystem.getFamily)
     }
   }
 
@@ -55,16 +55,6 @@ class Resources {
     }
   }
 
-
-  /**
-   *
-   * When CPU's can't handle theyre current clock they often drop 
-   * clock speed
-   * This runs a check to see if it's stable in that aspect
-   * */
-  // TODO: complete this together with the safety check
-  // def compareCpuFrequencyToMax: ZIO[Any, Throwable, Boolean] = if cpu.getMaxFreq() > cpu.getCurrentFreq() then false else true 
-  // def compareCpuVolege: ZIO[Any, Throwable, Boolean] = if sensors.getCpuVoltage()  
 
   /**
    * Memory specific methods

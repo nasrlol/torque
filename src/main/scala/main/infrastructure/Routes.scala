@@ -7,6 +7,7 @@ import main.domain._
 /**
  *
  * API routes to show the results of a stress test
+ * Routes => /cpu /ram /platform
  *
  * */
 val routes = Routes (
