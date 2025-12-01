@@ -82,16 +82,16 @@ class View extends Runner {
     ZIO.attempt {
       Console.printLine("\u001b[2J")
       println(s"""
-        ===================================================
-          || CPU Load:        ${cpu.getSystemCpuLoad(1000) * 100}%
-          || Logical Cores:   ${cpu.getLogicalProcessorCount()}
-          || Physical Cores:  ${cpu.getPhysicalProcessorCount()}
-          || Temperature:     ${sensors.getCpuTemperature()}°C
-          || Total RAM:       ${memory.getTotal() / (1024.0 * 1024 * 1024)} GB
-          || Available RAM:   ${memory.getAvailable() / (1024.0 * 1024 * 1024)} GB
-          ===================================================
+          ===============================================================================
+           CPU Load:        ${cpu.getSystemCpuLoad(1000) * 100}%
+           Logical Cores:   ${cpu.getLogicalProcessorCount()}
+           Physical Cores:  ${cpu.getPhysicalProcessorCount()}
+           Temperature:     ${sensors.getCpuTemperature()}°C
+           Total RAM:       ${memory.getTotal() / (1024.0 * 1024 * 1024)} GB
+           Available RAM:   ${memory.getAvailable() / (1024.0 * 1024 * 1024)} GB
+          ===============================================================================
             """.stripMargin)
-    } *> pressToContinue
+    }
   } 
 
   def menuDesign: Task[Unit] = {
@@ -126,11 +126,11 @@ class View extends Runner {
       _ <- menuDesign
       input <- Console.readLine("Enter your choice: ")
       _ <- toInt(input) match {
-        case 1 => lightCpuRun *> resourcesView *> menu
-        case 2 => heavyCpuRun *> resourcesView *> menu
-        case 3 => lightRamRun *> resourcesView *> menu
-        case 4 => heavyRamRun *> resourcesView *> menu
-        case 5 => httpHandler *> resourcesView *> menu
+        case 1 => lightCpuRun <&> resourcesView 
+        case 2 => heavyCpuRun <&> resourcesView 
+        case 3 => lightRamRun <&> resourcesView 
+        case 4 => heavyRamRun <&> resourcesView 
+        case 5 => httpHandler <&> resourcesView
         case 6 => Console.printLine("Exiting...") *> ZIO.succeed(System.exit(0))
         case _ => Console.printLine("Invalid choice") *> pressToContinue *> menu
       }
