@@ -28,10 +28,10 @@ git clone https://github.com/nasrlol/torque
 cd torque
 sbt run
 ```
-Or get it from my Gitea:
+Or get it from my own git server:
 
 ```bash
-git clone https://git.nsrddyn.com/nasr/torque
+git clone https://git.nsrddyn.com/torque.git
 cd torque
 sbt run
 ```
@@ -81,23 +81,25 @@ Torque is built using modern Scala functional programming patterns:
 ├── README.md
 ├── build.sbt
 ├── project
-│   ├── build.properties
-├── src
-│   └── main
-│       └── scala
-│           └── main
-│               ├── Main.scala
-│               ├── domain
-│               │   ├── CpuOperations.scala
-│               │   └── MemoryOperations.scala
-│               ├── infrastructure
-│               │   ├── Http.scala
-│               │   ├── Resources.scala
-│               │   └── routes
-│               │       └── Routes.scala
-│               └── services
-│                   ├── Benchmark.scala
-│                   └── Stress.scala
+│   └── build.properties
+└── src
+    └── main
+        └── scala
+            └── main
+                ├── Main.scala
+                ├── domain
+                │   ├── CpuOperations.scala
+                │   ├── MemoryOperations.scala
+                │   └── ResourceModels.scala
+                ├── infrastructure
+                │   ├── Http.scala
+                │   ├── Resources.scala
+                │   └── Routes.scala
+                ├── services
+                │   ├── Benchmark.scala
+                │   └── Stress.scala
+                └── view
+                    └── View.scala
 
 ```
 
